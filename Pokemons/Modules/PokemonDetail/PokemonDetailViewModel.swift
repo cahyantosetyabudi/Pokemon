@@ -46,7 +46,8 @@ final class PokemonDetailViewModel: PokemonDetailViewModelProtocol {
     
     var flavor: Driver<String> {
         pokemon
-            .map({ $0.flavorText ?? "-" })
+            .map({ $0.flavorText ?? "" })
+            .map({ $0.isEmpty ? "-" : "\"\($0)\"" })
             .asDriver(onErrorDriveWith: .empty())
     }
     

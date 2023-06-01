@@ -32,6 +32,15 @@ final class PokemonDetailVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        setupView()
+        bindView()
+    }
+    
+    private func setupView() {
+        flavorLbl.font = UIFont.italicSystemFont(ofSize: 16)
+    }
+    
+    private func bindView() {
         viewModel.thumbnailUrl
             .drive(onNext: { [weak self] url in
                 self?.thumbnailImg.kf.setImage(with: url)
@@ -58,6 +67,9 @@ final class PokemonDetailVC: UIViewController {
 
 extension UIViewController {
     func showPokemonDetailVC(pokemon: Pokemon) {
+        title = pokemon.name
+        navigationController?.navigationBar.tintColor = .white
+        navigationController?.navigationBar.backgroundColor = UIColor(red: 22/255, green: 27/255, blue: 34/255, alpha: 1.0)
         let viewModel = PokemonDetailViewModel(pokemon: pokemon)
         let pokemonDetailVC = PokemonDetailVC(viewModel: viewModel)
         show(pokemonDetailVC, sender: self)
