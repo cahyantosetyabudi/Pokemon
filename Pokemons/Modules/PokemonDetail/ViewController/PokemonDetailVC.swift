@@ -64,6 +64,12 @@ final class PokemonDetailVC: UIViewController {
                 cell.bind(viewModel: viewModel)
             }
             .disposed(by: disposeBag)
+        
+        pokemonCollectionView.rx.modelSelected(Pokemon.self)
+            .bind(onNext: { [weak self] pokemon in
+                self?.showPokemonDetailVC(pokemon: pokemon)
+            })
+            .disposed(by: disposeBag)
     }
     
     private func bindView() {

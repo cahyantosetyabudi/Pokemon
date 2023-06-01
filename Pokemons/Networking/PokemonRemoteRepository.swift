@@ -16,7 +16,7 @@ final class PokemonRemoteRepository: PokemonRepository {
     func getPokemons(keyword: String?, page: Int, pageSize: Int, completion: @escaping (BaseResponse<[Pokemon]>?, Error?) -> Void) {
         var query: String = ""
         if let keyword {
-            let queryName = "name:\(keyword)"
+            let queryName = "name:\(keyword)*"
             query.append(queryName)
         }
         
