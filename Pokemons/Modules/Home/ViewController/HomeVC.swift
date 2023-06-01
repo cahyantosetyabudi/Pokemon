@@ -37,6 +37,18 @@ final class HomeVC: UIViewController {
         viewModel.search("")
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        navigationController?.setNavigationBarHidden(false, animated: false)
+    }
+    
     private func setupCollectionView() {
         pokemonsCollectionView.rx.setDelegate(self).disposed(by: disposeBag)
         pokemonsCollectionView.register(UINib(nibName: "PokemonCardCell", bundle: nil), forCellWithReuseIdentifier: "PokemonCardCell")
@@ -44,26 +56,30 @@ final class HomeVC: UIViewController {
     
     private func bindCollectionView() {
         viewModel.pokemons
-            .asObservable()
-            .bind(to: pokemonsCollectionView.rx.items(cellIdentifier: "PokemonCardCell", cellType: PokemonCardCell.self)) { row, pokemon, cell in
+            .drive(pokemonsCollectionView.rx.items(cellIdentifier: "PokemonCardCell", cellType: PokemonCardCell.self)) { row, pokemon, cell in
                 let viewModel = PokemonCardViewModel(thumbnailUrl: pokemon.images.large)
                 cell.bind(viewModel: viewModel)
             }
             .disposed(by: disposeBag)
         
         pokemonsCollectionView.rx.willDisplayCell
-            .subscribe(onNext: { [weak self] cell, indexPath in
+            .bind(onNext: { [weak self] cell, indexPath in
                 guard let self = self else { return }
                 let currentPage = Int((self.pokemonsCollectionView.contentOffset.y / self.pokemonsCollectionView.frame.size.width).rounded())
                 self.viewModel.loadMore(page: currentPage, indexPath: indexPath)
+            })
+            .disposed(by: disposeBag)
+        
+        pokemonsCollectionView.rx.modelSelected(Pokemon.self)
+            .bind(onNext: { [weak self] pokemon in
+                self?.showPokemonDetailVC(pokemon: pokemon)
             })
             .disposed(by: disposeBag)
     }
     
     private func bindActivityIndicator() {
         viewModel.isFetching
-            .asObservable()
-            .bind(to: activityIndicator.rx.isAnimating)
+            .drive(activityIndicator.rx.isAnimating)
             .disposed(by: disposeBag)
     }
     
@@ -73,7 +89,7 @@ final class HomeVC: UIViewController {
             .compactMap({ $0 })
             .filter({ !$0.isEmpty })
             .debounce(.seconds(1), scheduler: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] keyword in
+            .bind(onNext: { [weak self] keyword in
                 self?.viewModel.search(keyword)
             })
             .disposed(by: disposeBag)

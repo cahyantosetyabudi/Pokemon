@@ -16,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let viewModel = HomeViewModel(repository: repository)
         let homeVC = HomeVC(viewModel: viewModel)
         window = UIWindow()
-        window?.rootViewController = homeVC
+        window?.rootViewController = UINavigationController(rootViewController: homeVC)
         window?.makeKeyAndVisible()
 
         return true
