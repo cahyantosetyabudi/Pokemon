@@ -1,5 +1,5 @@
 //
-//  RemoteRepository.swift
+//  PokemonRemoteRepository.swift
 //  Pokemons
 //
 //  Created by Cahyanto Setya Budi on 30/05/23.
@@ -8,17 +8,33 @@
 import Foundation
 
 protocol PokemonRepository {
-    func getPokemons(keyword: String, page: Int, pageSize: Int, completion: @escaping (BaseResponse<[Pokemon]>?, Error?) -> Void)
+    func getPokemons(keyword: String?, types: String?, subtypes: String?, page: Int, pageSize: Int, completion: @escaping (BaseResponse<[Pokemon]>?, Error?) -> Void)
 }
 
 final class PokemonRemoteRepository: PokemonRepository {
-    func getPokemons(keyword: String, page: Int, pageSize: Int, completion: @escaping (BaseResponse<[Pokemon]>?, Error?) -> Void) {
-        let searchKeyword = keyword.isEmpty ? "" : "name:\(keyword)"
+    func getPokemons(keyword: String?, types: String?, subtypes: String?, page: Int, pageSize: Int, completion: @escaping (BaseResponse<[Pokemon]>?, Error?) -> Void) {
+        var query: String = ""
+        if let keyword {
+            let queryName = "name:\(keyword)"
+            query.append(queryName)
+        }
+        
+        if let types {
+            let queryTypes = "-types:\(types)"
+            query.append(queryTypes)
+        }
+        
+        if let subtypes {
+            let querySubtypes = "subtypes:\(subtypes)"
+            query.append(querySubtypes)
+        }
+        
         let params: [String: Any] = [
-            "q": searchKeyword,
+            "q": query,
             "page": page,
             "pageSize": pageSize
         ]
+        
         provider.request(.getPokemons(body: params)) { result in
             switch result {
             case .success(let response):

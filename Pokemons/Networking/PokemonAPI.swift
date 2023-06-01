@@ -12,6 +12,7 @@ let provider: MoyaProvider<PokemonAPI> = MoyaProvider<PokemonAPI>(plugins: [Netw
 
 enum PokemonAPI {
     case getPokemons(body: [String: Any])
+    case getRecommendedPokemons(body: [String: Any])
 }
 
 extension PokemonAPI: TargetType {
@@ -26,12 +27,16 @@ extension PokemonAPI: TargetType {
         switch self {
         case .getPokemons:
             return "/v2/cards"
+        case .getRecommendedPokemons:
+            return "/v2/cards"
         }
     }
     
     var method: Moya.Method {
         switch self {
         case .getPokemons:
+            return .get
+        case .getRecommendedPokemons:
             return .get
         }
     }
@@ -40,12 +45,16 @@ extension PokemonAPI: TargetType {
         switch self {
         case .getPokemons(let body):
             return .requestParameters(parameters: body, encoding: URLEncoding.default)
+        case .getRecommendedPokemons(let body):
+            return .requestParameters(parameters: body, encoding: URLEncoding.default)
         }
     }
     
     var headers: [String : String]? {
         switch self {
         case .getPokemons:
+            return [:]
+        case .getRecommendedPokemons:
             return [:]
         }
     }

@@ -34,7 +34,7 @@ final class HomeVC: UIViewController {
         bindCollectionView()
         bindActivityIndicator()
         
-        viewModel.search("")
+        viewModel.search(nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {

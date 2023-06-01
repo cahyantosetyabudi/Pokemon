@@ -14,7 +14,7 @@ protocol HomeViewModelProtocol {
     var pokemons: Driver<[Pokemon]> { get }
     var isFetching: Driver<Bool> { get }
     
-    func search(_ keyword: String)
+    func search(_ keyword: String?)
     func loadMore(page: Int, indexPath: IndexPath)
 }
 
@@ -23,7 +23,7 @@ final class HomeViewModel: HomeViewModelProtocol {
     private let repository: PokemonRepository
     private let _pokemons: BehaviorRelay<[Pokemon]> = .init(value: [])
     private let _isFetching: BehaviorRelay<Bool> = .init(value: false)
-    private let _keyword: BehaviorRelay<String> = .init(value: "")
+    private let _keyword: BehaviorRelay<String?> = .init(value: nil)
     
     private var _currentPage: Int = 0
     
@@ -47,16 +47,16 @@ final class HomeViewModel: HomeViewModelProtocol {
             .disposed(by: disposeBag)
     }
     
-    func search(_ keyword: String) {
+    func search(_ keyword: String?) {
         _currentPage = 0
         _pokemons.accept([])
         _keyword.accept(keyword)
     }
     
-    private func fetchPokemons(with keyword: String) {
+    private func fetchPokemons(with keyword: String?) {
         _currentPage += 1
         _isFetching.accept(true)
-        repository.getPokemons(keyword: keyword, page: _currentPage, pageSize: pageSize) { [weak self] response, error in
+        repository.getPokemons(keyword: keyword, types: nil, subtypes: nil, page: _currentPage, pageSize: pageSize) { [weak self] response, error in
             self?._isFetching.accept(false)
             guard error == nil else {
                 return
