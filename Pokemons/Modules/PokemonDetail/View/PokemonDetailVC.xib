@@ -5,7 +5,6 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -13,6 +12,7 @@
             <connections>
                 <outlet property="flavorLbl" destination="Jaa-Og-Rho" id="cyA-sr-1qW"/>
                 <outlet property="nameLbl" destination="bMD-8j-Q7B" id="6Ic-LU-NVx"/>
+                <outlet property="pokemonCollectionView" destination="Brt-HH-ami" id="ZWe-Cx-jDT"/>
                 <outlet property="subtypesLbl" destination="1LT-3L-u3E" id="DfB-au-sRm"/>
                 <outlet property="thumbnailImg" destination="Qbp-54-Jwd" id="ht8-yr-xB1"/>
                 <outlet property="typeLbl" destination="Cfl-ty-781" id="7ea-Lr-E1C"/>
@@ -28,7 +28,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="393" height="1166"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fgy-WB-y5V">
-                            <rect key="frame" x="0.0" y="0.0" width="393" height="907"/>
+                            <rect key="frame" x="0.0" y="0.0" width="393" height="846"/>
                             <subviews>
                                 <imageView clipsSubviews="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Qbp-54-Jwd">
                                     <rect key="frame" x="96.666666666666686" y="16" width="200" height="300"/>
@@ -73,13 +73,13 @@
                                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="Brt-HH-ami">
-                                    <rect key="frame" x="16" y="526" width="361" height="361"/>
-                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="Brt-HH-ami">
+                                    <rect key="frame" x="16" y="526" width="361" height="300"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
-                                        <constraint firstAttribute="width" secondItem="Brt-HH-ami" secondAttribute="height" id="lUB-4X-fMm"/>
+                                        <constraint firstAttribute="height" constant="300" id="juh-Fg-7qw"/>
                                     </constraints>
-                                    <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="gTL-l6-Mzl">
+                                    <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="gTL-l6-Mzl">
                                         <size key="itemSize" width="128" height="128"/>
                                         <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                         <size key="footerReferenceSize" width="0.0" height="0.0"/>
@@ -139,9 +139,4 @@
             <point key="canvasLocation" x="153" y="-19"/>
         </view>
     </objects>
-    <resources>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-    </resources>
 </document>

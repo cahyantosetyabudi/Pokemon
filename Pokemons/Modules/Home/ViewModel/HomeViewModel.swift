@@ -56,7 +56,7 @@ final class HomeViewModel: HomeViewModelProtocol {
     private func fetchPokemons(with keyword: String?) {
         _currentPage += 1
         _isFetching.accept(true)
-        repository.getPokemons(keyword: keyword, types: nil, subtypes: nil, page: _currentPage, pageSize: pageSize) { [weak self] response, error in
+        repository.getPokemons(keyword: keyword, page: _currentPage, pageSize: pageSize) { [weak self] response, error in
             self?._isFetching.accept(false)
             guard error == nil else {
                 return
