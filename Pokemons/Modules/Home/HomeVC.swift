@@ -28,12 +28,30 @@ final class HomeVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        viewModel.isFetching
-            .asObservable()
-            .bind(to: activityIndicator.rx.isAnimating)
+                        
+        searchBar.delegate = self
+        searchBar.rx.text
+            .compactMap({ $0 })
+            .filter({ !$0.isEmpty })
+            .debounce(.seconds(1), scheduler: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] keyword in
+                self?.viewModel.search(keyword)
+            })
             .disposed(by: disposeBag)
         
+        setupCollectionView()
+        bindCollectionView()
+        bindActivityIndicator()
+        
+        viewModel.search("")
+    }
+    
+    private func setupCollectionView() {
+        pokemonsCollectionView.rx.setDelegate(self).disposed(by: disposeBag)
+        pokemonsCollectionView.register(UINib(nibName: "PokemonCardCell", bundle: nil), forCellWithReuseIdentifier: "PokemonCardCell")
+    }
+    
+    private func bindCollectionView() {
         viewModel.pokemons
             .asObservable()
             .bind(to: pokemonsCollectionView.rx.items(cellIdentifier: "PokemonCardCell", cellType: PokemonCardCell.self)) { row, pokemon, cell in
@@ -46,19 +64,16 @@ final class HomeVC: UIViewController {
             .subscribe(onNext: { [weak self] cell, indexPath in
                 guard let self = self else { return }
                 let currentPage = Int((self.pokemonsCollectionView.contentOffset.y / self.pokemonsCollectionView.frame.size.width).rounded())
-                self.viewModel.fetchPokemonsMore(currentPage: currentPage, indexPath: indexPath)
+                self.viewModel.loadMore(page: currentPage, indexPath: indexPath)
             })
             .disposed(by: disposeBag)
-                
-        searchBar.delegate = self
-        setupCollectionView()
-        
-        viewModel.fetchPokemons()
     }
     
-    private func setupCollectionView() {
-        pokemonsCollectionView.rx.setDelegate(self).disposed(by: disposeBag)
-        pokemonsCollectionView.register(UINib(nibName: "PokemonCardCell", bundle: nil), forCellWithReuseIdentifier: "PokemonCardCell")
+    private func bindActivityIndicator() {
+        viewModel.isFetching
+            .asObservable()
+            .bind(to: activityIndicator.rx.isAnimating)
+            .disposed(by: disposeBag)
     }
 }
 

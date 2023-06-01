@@ -8,12 +8,16 @@
 import Foundation
 
 protocol PokemonRepository {
-    func getPokemons(page: Int, pageSize: Int, completion: @escaping (BaseResponse<[Pokemon]>?, Error?) -> Void)
+    func getPokemons(keyword: String, page: Int, pageSize: Int, completion: @escaping (BaseResponse<[Pokemon]>?, Error?) -> Void)
 }
 
 final class PokemonRemoteRepository: PokemonRepository {
-    func getPokemons(page: Int, pageSize: Int, completion: @escaping (BaseResponse<[Pokemon]>?, Error?) -> Void) {
+    func getPokemons(keyword: String, page: Int, pageSize: Int, completion: @escaping (BaseResponse<[Pokemon]>?, Error?) -> Void) {
+//        let searchKeyword = "name:Pikachu"
+
+        let searchKeyword = keyword.isEmpty ? "" : "name:\(keyword)"
         let params: [String: Any] = [
+            "q": searchKeyword,
             "page": page,
             "pageSize": pageSize
         ]
@@ -47,19 +51,19 @@ struct Pokemon: Codable {
     let types: [String]
     let evolvesFrom: String?
     let abilities: [Ability]?
-    let attacks: [Attack]
-    let weaknesses: [Resistance]
+    let attacks: [Attack]?
+    let weaknesses: [Resistance]?
     let resistances: [Resistance]?
     let retreatCost: [String]?
     let convertedRetreatCost: Int?
     let datumSet: Set
-    let number, artist: String
+    let number, artist: String?
     let rarity, flavorText: String?
     let nationalPokedexNumbers: [Int]
     let legalities: Legalities
     let images: DatumImages
-    let tcgplayer: Tcgplayer
-    let cardmarket: Cardmarket
+    let tcgplayer: Tcgplayer?
+    let cardmarket: Cardmarket?
     let evolvesTo, rules: [String]?
 
     enum CodingKeys: String, CodingKey {
@@ -83,7 +87,7 @@ struct Attack: Codable {
 struct Cardmarket: Codable {
     let url: String
     let updatedAt: String
-    let prices: [String: Double]
+    let prices: [String: Double?]?
 }
 
 struct Set: Codable {
@@ -119,7 +123,7 @@ struct Resistance: Codable {
 struct Tcgplayer: Codable {
     let url: String
     let updatedAt: String
-    let prices: Prices
+    let prices: Prices?
 }
 
 struct Prices: Codable {
@@ -127,6 +131,6 @@ struct Prices: Codable {
 }
 
 struct Holofoil: Codable {
-    let low, mid, high, market: Double
+    let low, mid, high, market: Double?
     let directLow: Double?
 }

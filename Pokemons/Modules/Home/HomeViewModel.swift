@@ -11,20 +11,21 @@ import RxSwift
 import RxRelay
 
 protocol HomeViewModelProtocol {
-    var currentPage: Int { get }
     var pokemons: Driver<[Pokemon]> { get }
     var isFetching: Driver<Bool> { get }
     
-    func fetchPokemons()
-    func fetchPokemonsMore(currentPage: Int, indexPath: IndexPath)
+    func search(_ keyword: String)
+    func loadMore(page: Int, indexPath: IndexPath)
 }
 
 final class HomeViewModel: HomeViewModelProtocol {
+    private let disposeBag = DisposeBag()
     private let repository: PokemonRepository
     private let _pokemons: BehaviorRelay<[Pokemon]> = .init(value: [])
     private let _isFetching: BehaviorRelay<Bool> = .init(value: false)
+    private let _keyword: BehaviorRelay<String> = .init(value: "")
     
-    var currentPage: Int = 0
+    private var _currentPage: Int = 0
     
     private var pageSize: Int = 10
 
@@ -38,12 +39,24 @@ final class HomeViewModel: HomeViewModelProtocol {
     
     init(repository: PokemonRepository) {
         self.repository = repository
+        
+        _keyword
+            .subscribe(onNext: { [weak self] keyword in
+                self?.fetchPokemons(with: keyword)
+            })
+            .disposed(by: disposeBag)
     }
     
-    func fetchPokemons() {
-        currentPage += 1
+    func search(_ keyword: String) {
+        _currentPage = 0
+        _pokemons.accept([])
+        _keyword.accept(keyword)
+    }
+    
+    private func fetchPokemons(with keyword: String) {
+        _currentPage += 1
         _isFetching.accept(true)
-        repository.getPokemons(page: currentPage, pageSize: pageSize) { [weak self] response, error in
+        repository.getPokemons(keyword: keyword, page: _currentPage, pageSize: pageSize) { [weak self] response, error in
             self?._isFetching.accept(false)
             guard error == nil else {
                 return
@@ -59,13 +72,13 @@ final class HomeViewModel: HomeViewModelProtocol {
         }
     }
     
-    func fetchPokemonsMore(currentPage: Int, indexPath: IndexPath) {
+    func loadMore(page: Int, indexPath: IndexPath) {
         guard _pokemons.value.count >= 10,
                _pokemons.value.count - indexPath.row >= 5,
-               currentPage >= self.currentPage,
+               page >= self._currentPage,
               !_isFetching.value
         else { return }
         
-        fetchPokemons()
+        _keyword.accept(_keyword.value)
     }
 }
