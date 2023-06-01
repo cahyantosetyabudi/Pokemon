@@ -13,8 +13,6 @@ protocol PokemonRepository {
 
 final class PokemonRemoteRepository: PokemonRepository {
     func getPokemons(keyword: String, page: Int, pageSize: Int, completion: @escaping (BaseResponse<[Pokemon]>?, Error?) -> Void) {
-//        let searchKeyword = "name:Pikachu"
-
         let searchKeyword = keyword.isEmpty ? "" : "name:\(keyword)"
         let params: [String: Any] = [
             "q": searchKeyword,

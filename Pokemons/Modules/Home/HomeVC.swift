@@ -28,18 +28,9 @@ final class HomeVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                        
-        searchBar.delegate = self
-        searchBar.rx.text
-            .compactMap({ $0 })
-            .filter({ !$0.isEmpty })
-            .debounce(.seconds(1), scheduler: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] keyword in
-                self?.viewModel.search(keyword)
-            })
-            .disposed(by: disposeBag)
         
         setupCollectionView()
+        bindSearchBar()
         bindCollectionView()
         bindActivityIndicator()
         
@@ -73,6 +64,18 @@ final class HomeVC: UIViewController {
         viewModel.isFetching
             .asObservable()
             .bind(to: activityIndicator.rx.isAnimating)
+            .disposed(by: disposeBag)
+    }
+    
+    private func bindSearchBar() {
+        searchBar.delegate = self
+        searchBar.rx.text
+            .compactMap({ $0 })
+            .filter({ !$0.isEmpty })
+            .debounce(.seconds(1), scheduler: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] keyword in
+                self?.viewModel.search(keyword)
+            })
             .disposed(by: disposeBag)
     }
 }
