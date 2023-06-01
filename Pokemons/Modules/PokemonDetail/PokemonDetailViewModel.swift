@@ -15,10 +15,14 @@ protocol PokemonDetailViewModelProtocol {
     var type: Driver<String> { get }
     var subtypes: Driver<String> { get }
     var flavor: Driver<String> { get }
+    var onTapThumbnail: Driver<String> { get }
+    
+    func didTapThumbnailImg()
 }
 
 final class PokemonDetailViewModel: PokemonDetailViewModelProtocol {
     private let pokemon: BehaviorRelay<Pokemon>
+    private let _onTapThumbnail: PublishSubject<Void> = .init()
     
     var thumbnailUrl: Driver<URL> {
         pokemon
@@ -51,7 +55,18 @@ final class PokemonDetailViewModel: PokemonDetailViewModelProtocol {
             .asDriver(onErrorDriveWith: .empty())
     }
     
+    var onTapThumbnail: Driver<String> {
+        _onTapThumbnail
+            .withLatestFrom(pokemon)
+            .map({ $0.images.large })
+            .asDriver(onErrorDriveWith: .empty())
+    }
+    
     init(pokemon: Pokemon) {
         self.pokemon = .init(value: pokemon)
+    }
+    
+    func didTapThumbnailImg() {
+        _onTapThumbnail.onNext(())
     }
 }

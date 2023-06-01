@@ -37,6 +37,9 @@ final class PokemonDetailVC: UIViewController {
     }
     
     private func setupView() {
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapThumbnailImg))
+        thumbnailImg.addGestureRecognizer(tapGestureRecognizer)
+        
         flavorLbl.font = UIFont.italicSystemFont(ofSize: 16)
     }
     
@@ -62,6 +65,16 @@ final class PokemonDetailVC: UIViewController {
         viewModel.flavor
             .drive(flavorLbl.rx.text)
             .disposed(by: disposeBag)
+        
+        viewModel.onTapThumbnail
+            .drive(onNext: { [weak self] urlString in
+                self?.showPokemonImageVC(with: urlString)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    @objc private func didTapThumbnailImg() {
+        viewModel.didTapThumbnailImg()
     }
 }
 
