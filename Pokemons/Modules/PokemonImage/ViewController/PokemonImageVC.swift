@@ -35,12 +35,3 @@ class PokemonImageVC: UIViewController {
             .disposed(by: disposeBag)
     }    
 }
-
-extension UIViewController {
-    func showPokemonImageVC(with url: String) {
-        let viewModel = PokemonImageViewModel(imageUrlString: url)
-        let pokemonImageVC = PokemonImageVC(viewModel: viewModel)
-        pokemonImageVC.modalPresentationStyle = .overFullScreen
-        showDetailViewController(pokemonImageVC, sender: self)
-    }
-}

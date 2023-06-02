@@ -13,6 +13,7 @@ protocol Coordinator: class {
 
     func start()
     func showPokemonDetailVC(pokemon: Pokemon)
+    func showPokemonImageVC(with url: String)
 }
 
 class MainCoordinator: Coordinator {
@@ -40,5 +41,12 @@ class MainCoordinator: Coordinator {
         let pokemonDetailVC = PokemonDetailVC(viewModel: viewModel)
         pokemonDetailVC.coordinator = self
         navigationController.pushViewController(pokemonDetailVC, animated: true)
+    }
+    
+    func showPokemonImageVC(with url: String) {
+        let viewModel = PokemonImageViewModel(imageUrlString: url)
+        let pokemonImageVC = PokemonImageVC(viewModel: viewModel)
+        pokemonImageVC.modalPresentationStyle = .overFullScreen
+        navigationController.present(pokemonImageVC, animated: true)
     }
 }

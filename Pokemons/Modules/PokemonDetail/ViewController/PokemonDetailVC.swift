@@ -21,7 +21,7 @@ final class PokemonDetailVC: UIViewController {
     private let disposeBag = DisposeBag()
     private let viewModel: PokemonDetailViewModelProtocol
     
-    weak var coordinator: MainCoordinator?
+    weak var coordinator: Coordinator?
 
     init(viewModel: PokemonDetailViewModelProtocol) {
         self.viewModel = viewModel
@@ -95,7 +95,7 @@ final class PokemonDetailVC: UIViewController {
         
         viewModel.onTapThumbnail
             .drive(onNext: { [weak self] urlString in
-                self?.showPokemonImageVC(with: urlString)
+                self?.coordinator?.showPokemonImageVC(with: urlString)
             })
             .disposed(by: disposeBag)
         

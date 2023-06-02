@@ -179,9 +179,15 @@ final class CoordinatorSpy: Coordinator {
     
     var pokemonDetailVCCalled: Bool = false
     
+    var pokemonImageVCCalled: Bool = false
+    
     func start() {}
     
     func showPokemonDetailVC(pokemon: Pokemons.Pokemon) {
         pokemonDetailVCCalled = true
+    }
+    
+    func showPokemonImageVC(with url: String) {
+        pokemonImageVCCalled = true
     }
 }
