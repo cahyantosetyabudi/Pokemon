@@ -15,7 +15,7 @@ final class PokemonCardCell: UICollectionViewCell {
         super.awakeFromNib()
     }
     
-    func bind(viewModel: PokemonCardViewModel) {
+    func bind(viewModel: PokemonCardViewModelProtocol) {
         mainImg.kf.setImage(with: viewModel.thumbnailUrl)
     }
 }

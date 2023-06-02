@@ -7,7 +7,11 @@
 
 import Foundation
 
-struct PokemonCardViewModel {
+protocol PokemonCardViewModelProtocol {
+    var thumbnailUrl: URL? { get }
+}
+
+struct PokemonCardViewModel: PokemonCardViewModelProtocol {
     private let thumbnailUrlString: String
     
     init(thumbnailUrl: String) {
