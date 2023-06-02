@@ -17,6 +17,8 @@ final class HomeVC: UIViewController {
     private let viewModel: HomeViewModelProtocol
     private let disposeBag = DisposeBag()
     
+    weak var coordinator: MainCoordinator?
+    
     init(viewModel: HomeViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -72,7 +74,7 @@ final class HomeVC: UIViewController {
         
         pokemonsCollectionView.rx.modelSelected(Pokemon.self)
             .bind(onNext: { [weak self] pokemon in
-                self?.showPokemonDetailVC(pokemon: pokemon)
+                self?.coordinator?.showPokemonDetailVC(pokemon: pokemon)
             })
             .disposed(by: disposeBag)
     }
@@ -84,7 +86,6 @@ final class HomeVC: UIViewController {
     }
     
     private func bindSearchBar() {
-        searchBar.delegate = self
         searchBar.rx.text
             .compactMap({ $0 })
             .filter({ !$0.isEmpty })
@@ -94,10 +95,6 @@ final class HomeVC: UIViewController {
             })
             .disposed(by: disposeBag)
     }
-}
-
-extension HomeVC: UISearchBarDelegate {
-    
 }
 
 extension HomeVC: UICollectionViewDelegateFlowLayout {

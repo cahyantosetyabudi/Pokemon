@@ -19,15 +19,3 @@ final class PokemonCardCell: UICollectionViewCell {
         mainImg.kf.setImage(with: viewModel.thumbnailUrl)
     }
 }
-
-struct PokemonCardViewModel {
-    private let thumbnailUrlString: String
-    
-    init(thumbnailUrl: String) {
-        self.thumbnailUrlString = thumbnailUrl
-    }
-    
-    var thumbnailUrl: URL? {
-        URL(string: thumbnailUrlString)
-    }
-}

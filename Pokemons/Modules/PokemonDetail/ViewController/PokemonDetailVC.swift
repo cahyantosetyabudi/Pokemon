@@ -21,6 +21,8 @@ final class PokemonDetailVC: UIViewController {
     private let disposeBag = DisposeBag()
     private let viewModel: PokemonDetailViewModelProtocol
     
+    weak var coordinator: MainCoordinator?
+
     init(viewModel: PokemonDetailViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -37,12 +39,6 @@ final class PokemonDetailVC: UIViewController {
         setupCollectionView()
         bindCollectionView()
         bindView()
-        
-        Observable.combineLatest(viewModel.type.asObservable(), viewModel.subtypes.asObservable())
-            .subscribe(onNext: { [weak self] type, subtypes in
-                self?.viewModel.fetchRecommendedPokemons(types: type, subtypes: subtypes)
-            })
-            .disposed(by: disposeBag)
     }
     
     private func setupView() {
@@ -67,7 +63,7 @@ final class PokemonDetailVC: UIViewController {
         
         pokemonCollectionView.rx.modelSelected(Pokemon.self)
             .bind(onNext: { [weak self] pokemon in
-                self?.showPokemonDetailVC(pokemon: pokemon)
+                self?.coordinator?.showPokemonDetailVC(pokemon: pokemon)
             })
             .disposed(by: disposeBag)
     }
@@ -102,6 +98,12 @@ final class PokemonDetailVC: UIViewController {
                 self?.showPokemonImageVC(with: urlString)
             })
             .disposed(by: disposeBag)
+        
+        Observable.combineLatest(viewModel.type.asObservable(), viewModel.subtypes.asObservable())
+            .subscribe(onNext: { [weak self] type, subtypes in
+                self?.viewModel.fetchRecommendedPokemons(types: type, subtypes: subtypes)
+            })
+            .disposed(by: disposeBag)
     }
     
     @objc private func didTapThumbnailImg() {
@@ -114,17 +116,5 @@ extension PokemonDetailVC: UICollectionViewDelegateFlowLayout {
         let height: Double = 300
         let width: Double = ((2.0/3.0) * Double(height))
         return CGSize(width: width, height: height)
-    }
-}
-
-extension UIViewController {
-    func showPokemonDetailVC(pokemon: Pokemon) {
-        title = pokemon.name
-        navigationController?.navigationBar.tintColor = .white
-        navigationController?.navigationBar.backgroundColor = UIColor(red: 22/255, green: 27/255, blue: 34/255, alpha: 1.0)
-        let repository = PokemonRemoteRepository()
-        let viewModel = PokemonDetailViewModel(pokemon: pokemon, repository: repository)
-        let pokemonDetailVC = PokemonDetailVC(viewModel: viewModel)
-        show(pokemonDetailVC, sender: self)
     }
 }
