@@ -24,8 +24,7 @@ final class HomeViewModel: HomeViewModelProtocol {
     private let _pokemons: BehaviorRelay<[Pokemon]> = .init(value: [])
     private let _isFetching: BehaviorRelay<Bool> = .init(value: false)
     private let _keyword: BehaviorRelay<String?> = .init(value: nil)
-    
-    private var _currentPage: Int = 0
+    private let _currentPage: BehaviorRelay<Int> = .init(value: 1)
     
     private var pageSize: Int = 10
 
@@ -39,24 +38,18 @@ final class HomeViewModel: HomeViewModelProtocol {
     
     init(repository: PokemonRepository) {
         self.repository = repository
-        
-        _keyword
-            .subscribe(onNext: { [weak self] keyword in
-                self?.fetchPokemons(with: keyword)
-            })
-            .disposed(by: disposeBag)
     }
     
     func search(_ keyword: String?) {
-        _currentPage = 0
         _pokemons.accept([])
         _keyword.accept(keyword)
+        fetchPokemons(with: keyword, page: 1)
     }
     
-    private func fetchPokemons(with keyword: String?) {
-        _currentPage += 1
+    private func fetchPokemons(with keyword: String?, page: Int) {
         _isFetching.accept(true)
-        repository.getPokemons(keyword: keyword, page: _currentPage, pageSize: pageSize) { [weak self] response, error in
+        _currentPage.accept(page)
+        repository.getPokemons(keyword: keyword, page: page, pageSize: pageSize) { [weak self] response, error in
             self?._isFetching.accept(false)
             guard error == nil else {
                 return
@@ -73,12 +66,8 @@ final class HomeViewModel: HomeViewModelProtocol {
     }
     
     func loadMore(page: Int, indexPath: IndexPath) {
-        guard _pokemons.value.count >= 10,
-               _pokemons.value.count - indexPath.row >= 5,
-               page >= self._currentPage,
-              !_isFetching.value
-        else { return }
+        guard _pokemons.value.count >= 10, _pokemons.value.count - indexPath.row >= 5, page >= self._currentPage.value, !_isFetching.value else { return }
         
-        _keyword.accept(_keyword.value)
+        fetchPokemons(with: _keyword.value, page: page + 1)
     }
 }
