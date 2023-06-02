@@ -55,7 +55,7 @@ final class HomeVCTest: XCTestCase {
         XCTAssertTrue(sut.activityIndicator.isHidden)
         XCTAssertFalse(sut.activityIndicator.isAnimating)
     }
-  
+    
     func testViewDidLoadShouldShowItemsCellWhenPokemonNotEmpty() {
         let viewModel = HomeViewModelSpy()
         let sut = HomeVC(viewModel: viewModel)
@@ -69,6 +69,7 @@ final class HomeVCTest: XCTestCase {
             pokemons.append(pokemon)
         }
         viewModel.setPokemonList(pokemons)
+        sut.pokemonsCollectionView.dataSource?.collectionView(sut.pokemonsCollectionView, cellForItemAt: IndexPath(item: 0, section: 0))
         
         XCTAssertEqual(sut.pokemonsCollectionView.numberOfItems(inSection: 0), pokemons.count)
     }
@@ -108,6 +109,34 @@ final class HomeVCTest: XCTestCase {
         sut.pokemonsCollectionView.delegate?.collectionView?(sut.pokemonsCollectionView, didSelectItemAt: IndexPath(item: 0, section: 0))
 
         XCTAssertTrue(coordinator.pokemonDetailVCCalled)
+    }
+    
+    func testViewWillAppearShouldHideNavbar() {
+        let viewModel = HomeViewModelSpy()
+        let sut = HomeVC(viewModel: viewModel)
+        let navigationController = UINavigationController(rootViewController: sut)
+        var window = UIWindow()
+        window.rootViewController = navigationController
+        window.makeKeyAndVisible()
+
+        sut.loadViewIfNeeded()
+        sut.viewWillAppear(false)
+        
+        XCTAssertTrue(navigationController.navigationBar.isHidden)
+    }
+    
+    func testViewWillDisappearShouldShowNavbar() {
+        let viewModel = HomeViewModelSpy()
+        let sut = HomeVC(viewModel: viewModel)
+        let navigationController = UINavigationController(rootViewController: sut)
+        var window = UIWindow()
+        window.rootViewController = navigationController
+        window.makeKeyAndVisible()
+
+        sut.loadViewIfNeeded()
+        sut.viewWillDisappear(false)
+        
+        XCTAssertFalse(navigationController.navigationBar.isHidden)
     }
 }
 
@@ -150,9 +179,7 @@ final class CoordinatorSpy: Coordinator {
     
     var pokemonDetailVCCalled: Bool = false
     
-    func start() {
-        
-    }
+    func start() {}
     
     func showPokemonDetailVC(pokemon: Pokemons.Pokemon) {
         pokemonDetailVCCalled = true
