@@ -17,7 +17,7 @@ final class HomeVC: UIViewController {
     private let viewModel: HomeViewModelProtocol
     private let disposeBag = DisposeBag()
     
-    weak var coordinator: MainCoordinator?
+    weak var coordinator: Coordinator?
     
     init(viewModel: HomeViewModelProtocol) {
         self.viewModel = viewModel

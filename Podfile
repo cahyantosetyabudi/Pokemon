@@ -14,7 +14,8 @@ target 'Pokemons' do
 
   target 'PokemonsTests' do
     inherit! :search_paths
-    # Pods for testing
+    pod 'RxTest', '6.5.0'
+
   end
 
   target 'PokemonsUITests' do
