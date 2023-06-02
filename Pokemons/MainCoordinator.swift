@@ -12,6 +12,7 @@ protocol Coordinator {
     var navigationController: UINavigationController { get set }
 
     func start()
+    func showPokemonDetailVC(pokemon: Pokemon)
 }
 
 class MainCoordinator: Coordinator {
